@@ -39,18 +39,32 @@ export class Asignacion{
         this.name = name;
         this.value = value;
     }
+
+ 
+    toString(){
+        return "Asignacion \n" + "Nombre Variable: " +this.name.toString() + ", Valor Asignado: " + this.value.toString();
+    }
 }
 export class Creacion{
     constructor(name, value){
         this.name = name;
         this.value = value;
     }
+
+    toString(){
+        return "Creacion \n" + "Nombre Variable: " +this.name.toString() + ", Valor Asignado: " + this.value.toString();
+    }
 }
 export class Ciclo{}
 export class Condicional{}
+
 export class Impresion{
     constructor(valorAImprimir){
         this.valorAImprimir = valorAImprimir;
+    }
+
+    toString(){
+        return "Impresion: \n" + "Valor a Imprimir: " + this.valorAImprimir.toString();
     }
 }
 export class Metodo{}

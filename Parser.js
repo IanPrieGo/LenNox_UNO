@@ -31,11 +31,13 @@ export class Parser {
 
         }
 
-        console.log(" +=> COMANDOS:");
-        console.log(commands);
-
-        console.log(commands[1]);
-        // console.log(commands[1].value);
+        console.log(" \n\n \t +=> COMANDOS:");
+        let i = 0;
+        for (let com of commands){
+            console.log("   C"  + i + ". " + com.toString() + "\n");
+            i++;
+        }
+        
 
         this.result = commands;
 
@@ -150,12 +152,21 @@ export class Parser {
     impresion(){
         let valorAImprimir;
         this.advanceIndex(1);
+        if (this.currentToken().type != TokenType.LLAVEABIERTA){
+            this.abort("Expecting \" { \"", 1);
+        }
 
+        this.advanceIndex(1);
         console.log(this.currentToken())
         valorAImprimir = this.expresion();
         console.log(valorAImprimir);
 
         if (valorAImprimir == undefined) this.abort("Expecting Expression", 1);
+
+        this.advanceIndex(1);
+         if (this.currentToken().type != TokenType.LLAVECERRADA){
+            this.abort("Expecting \" } \"", 1);
+        }
 
         this.advanceIndex(1);
         if (this.currentToken().type != TokenType.EOC){
@@ -198,6 +209,11 @@ export class Parser {
         }
 
         return expresion;
+
+    }
+
+    primary(){
+
 
     }
 

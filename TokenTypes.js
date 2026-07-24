@@ -20,6 +20,7 @@ export const GREATERTHAN = ">";
 export const LESSTHAN = "<";
 
 export const IDENTIFIER = "id";
+export const CADENA = "cadena";
 
 export const LET = "Let";
 export const SI = "Si";

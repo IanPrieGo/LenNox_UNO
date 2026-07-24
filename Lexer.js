@@ -1,6 +1,7 @@
 import * as TokenTypes from "./TokenTypes.js";
 import {Token, Statement, Operator, Literal, Identifier} from "./Token.js";
 import process from "node:process";
+import { clearScreenDown } from "node:readline";
 
 export class Lexer {
     constructor(){
@@ -22,7 +23,10 @@ export class Lexer {
                 this.charIndex++;
             }
 
+
+            // console.log(this.currentChar()  + ", "+ this.charIndex);
             switch(this.currentChar()){
+                
                 case TokenTypes.PLUS:
                     this.tokens.push(new Operator(TokenTypes.PLUS));
                 break;
@@ -46,6 +50,30 @@ export class Lexer {
                 case ";":
                     this.tokens.push(new Statement(TokenTypes.EOC));
                 break;
+
+                case "{":
+                    this.tokens.push(new Token(TokenTypes.LLAVEABIERTA, null));
+                break;
+
+                case "}":
+                    this.tokens.push(new Token(TokenTypes.LLAVECERRADA, null));
+                break;
+
+                case "\"":
+                    // console.log("Double Quotes!");
+                    
+                    let cadena =  "";
+                    let quit = false;
+                    let keyPos;
+                    this.charIndex++;
+                    while(this.currentChar() != "\""){
+                        cadena += this.currentChar();
+                        this.charIndex++;
+                    }
+                    this.tokens.push(new Literal(TokenTypes.CADENA, cadena));
+
+                break;
+
                 
                 default:
                 if (this.isNumeric(this.currentChar())) {
