@@ -47,6 +47,6 @@ export class Literal extends Token{
     }
 
     toString(){
-        return "Literal(" + this.value + ")";
+        return "Literal(" + this.value + ", " + this.type + ")";
     }
 }

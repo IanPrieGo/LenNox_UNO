@@ -8,7 +8,11 @@ export class BINARY{
     }
 
     toString(){
-        return " (" + this.firstOperand + " " + this.operator + " " + this.secondOperand + ") ";
+        return "BINARY (" + this.firstOperand + " " + this.operator + " " + this.secondOperand + ")";
+    }
+    
+    concatenate(){
+        return this.firstOperand.concatenate() + " " + this.operator.concatenate() + " " + this.secondOperand.concatenate();
     }
 }
 
@@ -18,7 +22,11 @@ export class PRIMARY{
     }
 
     toString(){
-        return this.token.toString();
+        return "PRIMARY("+ this.token.toString() + ")";
+    }
+
+    concatenate(){
+        return "\"" + this.token.value  + "\"";
     }
 }
 
@@ -29,5 +37,9 @@ export class OPERATOR{
 
     toString(){
         return this.token.toString();
+    }
+
+    concatenate(){
+        return this.token.type;
     }
 }

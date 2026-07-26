@@ -12,7 +12,7 @@ export class Lexer {
 
     process(source){
         this.source = source;
-
+        
         while (this.currentChar() != undefined){
             
             while (
@@ -132,7 +132,7 @@ export class Lexer {
 
         this.tokens.push(new Token(TokenTypes.EOF, null));
 
-        console.log(this.tokens);
+        // console.log(this.tokens);
 
     }
 

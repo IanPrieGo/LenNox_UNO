@@ -1,3 +1,5 @@
+import * as Expresion from "./Expresion.js";
+
 export class Comando {
 
     constructor(comando){
@@ -6,9 +8,6 @@ export class Comando {
 
 }
 
-export class Expresion {
-
-}
 
 export class Igualdad {
 
@@ -61,10 +60,33 @@ export class Condicional{}
 export class Impresion{
     constructor(valorAImprimir){
         this.valorAImprimir = valorAImprimir;
+        this.valorFinal;
+
+        // if (this.valorAImprimir instanceof Expresion.BINARY){
+        //     this.valorFinal = this.valorAImprimir.firstOperand.value
+        // }
+
+        console.log("xd");
+        console.log(this.valorAImprimir);
+        // console.log(this.valorAImprimir.firstOperand);
+        // console.log(this.valorAImprimir.secondOperand);
+    }
+    toJava(){
+        return "\t\tSystem.out.println(" + this.valorAImprimir.concatenate() +");";
     }
 
     toString(){
         return "Impresion: \n" + "Valor a Imprimir: " + this.valorAImprimir.toString();
+    }
+
+    concatenateStrings(){
+        let content = this.valorAImprimir;
+
+        // GO DOWN
+        while (content.firstOperand instanceof Expresion.BINARY){
+            
+        }
+
     }
 }
 export class Metodo{}

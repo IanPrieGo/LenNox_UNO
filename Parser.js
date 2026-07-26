@@ -17,7 +17,7 @@ export class Parser {
 
     parseProgram(tokens, holder){
         this.tokenList = tokens;
-        console.log("Programa: ");
+        console.log("+=> Programa: ");
 
         let commands = [];
 
@@ -31,7 +31,7 @@ export class Parser {
 
         }
 
-        console.log(" \n\n \t +=> COMANDOS:");
+        console.log(" \n\n+=> COMANDOS:");
         let i = 0;
         for (let com of commands){
             console.log("   C"  + i + ". " + com.toString() + "\n");
@@ -50,17 +50,17 @@ export class Parser {
         switch (this.currentToken().type){
 
             case TokenType.LET:
-                console.log("Creacion");
+                console.log("   Creacion");
                 comando = this.creacion();
             break;
 
             case  TokenType.IMPRIME:
-                console.log("Impresion");
+                console.log("   Impresion");
                 comando = this.impresion();
             break;
 
             case  TokenType.IDENTIFIER:
-                console.log("Asignacion");
+                console.log("   Asignacion");
                 comando = this.asignacion();
             break;
 
@@ -157,9 +157,9 @@ export class Parser {
         }
 
         this.advanceIndex(1);
-        console.log(this.currentToken())
+        // console.log(this.currentToken())
         valorAImprimir = this.expresion();
-        console.log(valorAImprimir);
+        // console.log(valorAImprimir);
 
         if (valorAImprimir == undefined) this.abort("Expecting Expression", 1);
 

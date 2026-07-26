@@ -9,8 +9,3 @@ Imprime {
     "al menos ya se pueda ejecutar de una, sin tener que pasarle el \n" +
     "el ejecutable a otro IDE jaja"
 };
-
-
-Let a = 0; 
-a = a + 5;
-Imprime {5};

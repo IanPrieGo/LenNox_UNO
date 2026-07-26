@@ -3,26 +3,32 @@ import fs from "node:fs";
 
 export class Emitter{
     constructor(){
+        this.commands = [];
 
     }
 
-    createJavaFile(path, content){
+    createJavaFile(path){
         let header = 
         "public class MAIN {" + "\n" + 
         "   public static void main(String [] args) {" + "\n"
         ;
 
-        let body = 
-        "       " + this.sysOut(content, false) + ";\n"
-        ;
+        let body = "";
 
+        for (let com of this.commands){
+            body+= com.toJava();
+        }
 
         let footer = 
-        "   }" + "\n" + 
+        "\n   }" + "\n" + 
         "}"
         ;
 
         fs.writeFileSync(path, header + body + footer);
+    }
+
+    giveCommands(commands){
+        this.commands = commands;
     }
 
     sysOut(content, isString){
