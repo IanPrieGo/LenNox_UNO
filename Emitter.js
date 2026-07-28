@@ -4,6 +4,7 @@ import fs from "node:fs";
 export class Emitter{
     constructor(){
         this.commands = [];
+        this.declaredVariabled = [];
 
     }
 
@@ -15,8 +16,8 @@ export class Emitter{
 
         let body = "";
 
-        for (let com of this.commands){
-            body+= com.toJava();
+        for (let com of this.commands){        
+            body += com.toJava(this) + "\n";
         }
 
         let footer = 
@@ -29,6 +30,10 @@ export class Emitter{
 
     giveCommands(commands){
         this.commands = commands;
+    }
+
+    giveVariableInfo(dv){
+        this.declaredVariabled = dv;
     }
 
     sysOut(content, isString){

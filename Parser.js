@@ -135,7 +135,7 @@ export class Parser {
 
         if (this.currentToken().type == "="){
             this.advanceIndex(1);
-            variableValue = this.currentToken().value;
+            variableValue = this.expresion();
             this.advanceIndex(1);
         } 
     
@@ -238,7 +238,7 @@ export class Parser {
     }
 
     abort(mes, errCode){
-        console.error("ParsingError. " + mes); process.exit(errCode);
+        console.error("ParsingError. " + mes + ` at line ${this.currentToken().line} on token [ ${this.currentToken()} ] `); process.exit(errCode);
     }
 
 }

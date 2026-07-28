@@ -34,24 +34,46 @@ export class Primaria {
 }
 
 export class Asignacion{
-    constructor(name, value){
+    constructor(name, value, dataType){
         this.name = name;
         this.value = value;
+        this.dataType = dataType;
     }
 
  
     toString(){
-        return "Asignacion \n" + "Nombre Variable: " +this.name.toString() + ", Valor Asignado: " + this.value.toString();
+        return "Asignacion \n" + "Nombre Variable: " + this.name.toString() + ", Valor Asignado: " + this.value.toString();
     }
+
+    toJava(emitter){
+        console.log("Asignando en Java")
+        let assignedDataType = "";
+        if (this.dataType != undefined){
+            assignedDataType = this.dataType + " ";
+        }
+        return "\t\t" + assignedDataType + this.name + " = " + this.value.toExpresion(emitter) +  ";"
+    }
+
+  
 }
 export class Creacion{
-    constructor(name, value){
+    constructor(name, value, dataType){
         this.name = name;
         this.value = value;
     }
 
     toString(){
-        return "Creacion \n" + "Nombre Variable: " +this.name.toString() + ", Valor Asignado: " + this.value.toString();
+        return "Creacion \n" + "Nombre Variable: " + this.name.toString() + ", Valor Asignado: " + this.value.toString();
+    }
+    
+    toJava(emitter){
+        console.log("Creando en Java");
+        console.log(this.value)
+        let assignedDataType = "Object ";
+        if (this.dataType != undefined){
+            assignedDataType = this.dataType;
+        }
+        return "\t\t" + assignedDataType + this.name + " = " + this.value.toExpresion(emitter) +  ";"
     }
 }
 export class Ciclo{}
@@ -79,15 +101,6 @@ export class Impresion{
         return "Impresion: \n" + "Valor a Imprimir: " + this.valorAImprimir.toString();
     }
 
-    concatenateStrings(){
-        let content = this.valorAImprimir;
-
-        // GO DOWN
-        while (content.firstOperand instanceof Expresion.BINARY){
-            
-        }
-
-    }
 }
 export class Metodo{}
 export class Operacion{}

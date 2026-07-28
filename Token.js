@@ -1,9 +1,10 @@
 import * as TokenTypes from "./TokenTypes.js";
 
 export class Token {
-    constructor(type, value){
+    constructor(type, value, line){
         this.type = type;
         this.value = value;
+        this.line = line;
     }
 
     toString(){
@@ -12,25 +13,26 @@ export class Token {
 }
 
 export class Statement extends Token{
-    constructor(type){
-        super(type, null);
+    constructor(type, line){
+        super(type, null, line);
     }
 }
 
 export class Identifier extends Token{
-    constructor(type, name){
-        super(type, name);
+    constructor(type, value, name,  line){
+        super(type, value, line);
+        this.name = name;
     }
 }
 
 export class Operator extends Token{
-    constructor(type){
-        super(type, null);
+    constructor(type, line){
+        super(type, null, line);
     }
 }
 
 export class Literal extends Token{
-    constructor(type, value){
+    constructor(type, value, line){
         switch(value){
             case TokenTypes.ZERO: value = 0; break;
             case TokenTypes.ONE: value = 1; break;
@@ -43,7 +45,7 @@ export class Literal extends Token{
             case TokenTypes.EIGHT: value = 8; break;
             case TokenTypes.NINE: value = 9; break;
         }
-        super(type, value);
+        super(type, value, line);
     }
 
     toString(){
