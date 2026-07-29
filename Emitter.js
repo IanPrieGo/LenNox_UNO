@@ -4,7 +4,7 @@ import fs from "node:fs";
 export class Emitter{
     constructor(){
         this.commands = [];
-        this.declaredVariabled = [];
+        this.declaredVariables = [];
 
     }
 
@@ -29,11 +29,15 @@ export class Emitter{
     }
 
     giveCommands(commands){
+        console.log("Commands Recived!");
         this.commands = commands;
+        console.log(this.commands);
     }
 
     giveVariableInfo(dv){
-        this.declaredVariabled = dv;
+        console.log("Variables Recived!");
+        this.declaredVariables = dv;
+        console.log(this.declaredVariables);
     }
 
     sysOut(content, isString){

@@ -27,6 +27,6 @@ let emitter = new Emitter();
 
 lexer.process(source);
 parser.parseProgram(lexer.tokens);
-emitter.giveCommands(parser.result);
 emitter.giveVariableInfo(parser.declaredVariables);
+emitter.giveCommands(parser.result);
 emitter.createJavaFile('./MAIN.java');

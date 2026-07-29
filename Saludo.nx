@@ -1,0 +1,11 @@
+Imprime {
+    "H" + "ola xd \n" +
+    "Este es un Programa escrito en NoxLanUNO\n" +
+    ":D \n\n" +
+
+    "Oh Bueno, esta escrito en NoxLan UNO, pero esta compilado \n" + 
+    "pero en Java. Por el momento solo se puede ejecutar de esta manera \n" +
+    "Pero para NoxLan DOS, espero ya poder compilar a ASM o que \n" +
+    "al menos ya se pueda ejecutar de una, sin tener que pasarle el \n" +
+    "el ejecutable a otro IDE jaja"
+};

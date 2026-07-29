@@ -1,6 +1,7 @@
 import * as TokenType from "./TokenTypes.js";
 import * as Exp from "./Expresion.js";
 import * as Syntax  from "./SyntaxElements.js";
+import Variable from "./Variable.js";
 import process from "node:process";
 
 export class Parser {
@@ -17,7 +18,7 @@ export class Parser {
 
     parseProgram(tokens, holder){
         this.tokenList = tokens;
-        console.log("+=> Programa: ");
+        // console.log("+=> Programa: ");
 
         let commands = [];
 
@@ -38,6 +39,7 @@ export class Parser {
             i++;
         }
         
+        console.log("----------------------------------------------")
 
         this.result = commands;
 
@@ -50,17 +52,17 @@ export class Parser {
         switch (this.currentToken().type){
 
             case TokenType.LET:
-                console.log("   Creacion");
+                // console.log("   Creacion");
                 comando = this.creacion();
             break;
 
             case  TokenType.IMPRIME:
-                console.log("   Impresion");
+                // console.log("   Impresion");
                 comando = this.impresion();
             break;
 
             case  TokenType.IDENTIFIER:
-                console.log("   Asignacion");
+                // console.log("   Asignacion");
                 comando = this.asignacion();
             break;
 
@@ -116,6 +118,7 @@ export class Parser {
         let asignValue = false;
         let variableName;
         let variableValue = null;
+        let variableType = "int";
 
         this.advanceIndex(1);
         if (this.currentToken().type != TokenType.IDENTIFIER){
@@ -129,7 +132,32 @@ export class Parser {
                 this.abort("Variable \"" + variable[0] +"\" Already Declared ", 1);
             };
         }
-        console.log("Variable  \"" + variableName +"\" added to Declared variables list");
+        console.log("uVariable  \"" + variableName +"\" added to Declared variables list");
+        
+        if(variableType == undefined && variableValue != null){
+            switch(typeof variableValue){
+                case "string":
+                    variableType = "String";
+                break;
+
+                case "number":
+                case "bigint":
+                    variableType = "integer";
+                break;
+
+                case "boolean":
+                    variableType = "bool"
+                    break;
+
+                case "symbol":
+                case "undefined":
+                case "object":
+                case "function":
+                default:
+                    this.abort(`Invalid DataType \"${typeof variableValue}\" ${variableValue}`, 1);
+                    break;
+            }
+        }
 
         this.advanceIndex(1);
 
@@ -144,8 +172,10 @@ export class Parser {
             this.abort("Expecting \" ; \"", 1);
         }
 
+        
 
-        this.declaredVariables.push([variableName, variableValue]);
+
+        this.declaredVariables.push(new Variable(variableName, variableValue, variableType));
         return new Syntax.Creacion(variableName, variableValue);
     }
 
@@ -159,7 +189,8 @@ export class Parser {
         this.advanceIndex(1);
         // console.log(this.currentToken())
         valorAImprimir = this.expresion();
-        // console.log(valorAImprimir);
+        console.log(valorAImprimir);
+        console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
 
         if (valorAImprimir == undefined) this.abort("Expecting Expression", 1);
 

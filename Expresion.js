@@ -1,5 +1,4 @@
 
-
 export class BINARY{
     constructor(firstOperand, operator, secondOperand){
         this.firstOperand = firstOperand;
@@ -11,12 +10,18 @@ export class BINARY{
         return "BINARY (" + this.firstOperand + " " + this.operator + " " + this.secondOperand + ")";
     }
 
-    toExpresion(emitter){
-        return `(${this.firstOperand.token.value})` + this.firstOperand.token.value + " " + this.operator.token + ` (${this.secondOperand.token.value})` + this.secondOperand.token.value;
+    toExpresion(e){
+        return `(${this.getDataType(e, this.firstOperand)})` + this.firstOperand.token.value + " " + this.operator.token + ` (${this.getDataType(e, this.firstOperand)})` + this.secondOperand.token.value;
     }
 
-    checkVariableType(){
-        
+    getDataType(emitter, variable){
+        let type;
+        for (let dv of emitter.declaredVariables){
+            if (dv.nombre == variable.token.value){
+                return dv.tipo;
+            }
+        }
+        return undefined;
     }
     
     concatenate(){
@@ -38,7 +43,10 @@ export class PRIMARY{
     }
 
     concatenate(){
-        return "\"" + this.token.value  + "\"";
+        if (this.token.type == "cadena"){
+            return "\"" + this.token.value + "\"";
+        }
+        return this.token.value;
     }
 }
 

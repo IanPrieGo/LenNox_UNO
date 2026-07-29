@@ -19,9 +19,8 @@ export class Statement extends Token{
 }
 
 export class Identifier extends Token{
-    constructor(type, value, name,  line){
+    constructor(type, value,  line){
         super(type, value, line);
-        this.name = name;
     }
 }
 
