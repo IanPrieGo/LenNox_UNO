@@ -11,6 +11,7 @@ export class Parser {
         this.stopParsing = false;
         this.hadError = false;
         this.declaredVariables = [];
+        this.logs = [];
 
         this.result;
 
@@ -18,40 +19,36 @@ export class Parser {
 
     parseProgram(tokens, holder){
         this.tokenList = tokens;
-        // console.log("+=> Programa: ");
 
         let commands = [];
-
         while (!this.match(this.currentToken(), [TokenType.EOF])){
-
+            
             let currentCommand = this.command();
 
             if (currentCommand != undefined) {
                 commands.push(currentCommand);
             }
-
-        }
-
-        console.log(" \n\n+=> COMANDOS:");
-        let i = 0;
-        for (let com of commands){
-            console.log("   C"  + i + ". " + com.toString() + "\n");
-            i++;
         }
         
-        console.log("----------------------------------------------")
-
+        
+        this.logs.push(" \n\n+=> COMANDOS:");
+        let i = 0;
+        for (let com of commands){
+            this.logs.push("   C"  + i + ". " + com.toString() + "\n");
+            i++;
+        }
+                
         this.result = commands;
 
     }
     
     command(){
-
+        
         let comando;
 
         switch (this.currentToken().type){
 
-            case TokenType.LET:
+            case TokenType.VAR:
                 // console.log("   Creacion");
                 comando = this.creacion();
             break;
@@ -66,6 +63,11 @@ export class Parser {
                 comando = this.asignacion();
             break;
 
+            case  TokenType.SI:
+                // console.log("   Asignacion");
+                comando = this.condicional();
+            break;
+
             default:
                 this.abort("Invalid Command", 1);
             break;
@@ -76,6 +78,10 @@ export class Parser {
 
         return comando;
 
+    }
+
+    condicional(){
+        
     }
 
     asignacion(){
@@ -91,16 +97,25 @@ export class Parser {
         this.advanceIndex(1);
 
         if (this.currentToken() == TokenType.IDENTIFIER){
+            let isDeclared = false;
             for (let variable of this.declaredVariables){
-                if (variable[0] != this.currentToken().value){
-                    this.abort("Se intento una operacion con una variable no declarada", 1)
+                if (variable.nombre == this.currentToken().value){
+                    isDeclared = true;
                 }
+                // console.log(variable.nombre);
+                // console.log(this.currentToken().value);
+                // console.log();
             }
+            if (!isDeclared){
+                console.log(isDeclared);
+                this.abort(`Se intento una operacion con una variable no declarada\nValor Token: ${this.currentToken()}`, 1)
+            }
+
         } else if (this.currentToken().type != TokenType.LITERAL){
             this.abort("Expecting Literal  ", 1);
         }
 
-        console.log(this.currentToken());
+        this.logs.push(this.currentToken());
 
         variableValue = this.expresion();
 
@@ -128,11 +143,11 @@ export class Parser {
         variableName = this.currentToken().value;
 
         for (let variable of this.declaredVariables){
-            if (variable[0] == variableName){
-                this.abort("Variable \"" + variable[0] +"\" Already Declared ", 1);
+            if (variable.nombre == variableName){
+                this.abort("Variable \"" + variable.nombre +"\" Already Declared ", 1);
             };
         }
-        console.log("uVariable  \"" + variableName +"\" added to Declared variables list");
+        this.logs.push("Variable  \"" + variableName +"\" added to Declared variables list");
         
         if(variableType == undefined && variableValue != null){
             switch(typeof variableValue){
@@ -172,14 +187,18 @@ export class Parser {
             this.abort("Expecting \" ; \"", 1);
         }
 
-        
-
-
+        console.log(
+            `
+            Name: ${variableName} \n
+            Value: ${variableValue}\n
+            `
+        );
         this.declaredVariables.push(new Variable(variableName, variableValue, variableType));
         return new Syntax.Creacion(variableName, variableValue);
     }
 
     impresion(){
+        
         let valorAImprimir;
         this.advanceIndex(1);
         if (this.currentToken().type != TokenType.LLAVEABIERTA){
@@ -189,8 +208,8 @@ export class Parser {
         this.advanceIndex(1);
         // console.log(this.currentToken())
         valorAImprimir = this.expresion();
-        console.log(valorAImprimir);
-        console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+        this.logs.push(valorAImprimir);
+        this.logs.push("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
 
         if (valorAImprimir == undefined) this.abort("Expecting Expression", 1);
 
@@ -204,6 +223,7 @@ export class Parser {
             this.abort("Expecting \" ; \"", 1);
         }
 
+        
         return new Syntax.Impresion(valorAImprimir);
     }
 
@@ -270,6 +290,14 @@ export class Parser {
 
     abort(mes, errCode){
         console.error("ParsingError. " + mes + ` at line ${this.currentToken().line} on token [ ${this.currentToken()} ] `); process.exit(errCode);
+    }
+
+    printLogs(){
+        console.log("Parser Logs--------");
+        for (let log of this.logs){
+            console.log(log);
+        }
+        console.log("------------------\n\n");
     }
 
 }

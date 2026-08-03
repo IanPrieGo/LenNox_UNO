@@ -43,6 +43,10 @@ export class Literal extends Token{
             case TokenTypes.SEVEN: value = 7; break;
             case TokenTypes.EIGHT: value = 8; break;
             case TokenTypes.NINE: value = 9; break;
+
+            case TokenTypes.VERDAD: value = true; break;
+            case TokenTypes.FALSO: value = false; break;
+            case TokenTypes.NULO: value = null; break;
         }
         super(type, value, line);
     }

@@ -5,6 +5,7 @@ export class Emitter{
     constructor(){
         this.commands = [];
         this.declaredVariables = [];
+        this.logs = [];
 
     }
 
@@ -29,15 +30,15 @@ export class Emitter{
     }
 
     giveCommands(commands){
-        console.log("Commands Recived!");
+        this.logs.push("Commands Recived!");
         this.commands = commands;
-        console.log(this.commands);
+        this.logs.push(this.commands);
     }
 
     giveVariableInfo(dv){
-        console.log("Variables Recived!");
+        this.logs.push("Variables Recived!");
         this.declaredVariables = dv;
-        console.log(this.declaredVariables);
+        this.logs.push(this.declaredVariables);
     }
 
     sysOut(content, isString){
@@ -46,6 +47,14 @@ export class Emitter{
             dQ = "\""
         }
         return " System.out.println(" + dQ + content + dQ + ") "
+    }
+
+    printLogs(){
+        console.log("Emitter Logs--------");
+        for (let log of this.logs){
+            console.log(log);
+        }
+        console.log("------------------\n\n");
     }
 
 }

@@ -9,28 +9,31 @@ export class Lexer {
         this.charIndex = 0;
         this.lineIndex = 1;
         this.tokens = [];
+        this.logs = [];
     }
 
     process(source){
         this.source = source;
+        this.logs.push("Source: ");
+        this.logs.push(source);
         
         while (this.currentChar() != undefined){
 
             while (
-            this.currentChar() === " " |
-            this.currentChar() === "\r" |
-            this.currentChar() === "\n" |
-            this.currentChar() === "#"
+                this.currentChar() === " " |
+                this.currentChar() === "\r" |
+                this.currentChar() === "\n" |
+                this.currentChar() === "#"
             ){  
                 if (this.currentChar() === "\r")this.lineIndex++;
 
                 if(this.currentChar() === "#"){
                     // console.log("Checando comentarios");
-                    let commStart = this.charIndex;
+                    let commStart = this.lineIndex;
                     this.charIndex++;
                     while (this.currentChar() != "#"){
                         // console.log("No encuentro el final del Comentario Jefe ");
-                        if (this.currentChar() == undefined) this.abort(`No matching # for # at ${commStart}`, 1);
+                        if (this.currentChar() == undefined) this.abort(`No matching # for # at line ${commStart}`, 1);
                         this.charIndex++;
                     }
                 }
@@ -76,6 +79,14 @@ export class Lexer {
                     this.tokens.push(new Token(TokenTypes.LLAVECERRADA, null, this.lineIndex));
                 break;
 
+                case "(":
+                    this.tokens.push(new Token(TokenTypes.PARENTESISABIERTO, null, this.lineIndex));
+                break;
+
+                case ")":
+                    this.tokens.push(new Token(TokenTypes.PARENTESISCERRADO, null, this.lineIndex));
+                break;
+
                 case "\"":
                     // console.log("Double Quotes!");
                     
@@ -117,8 +128,8 @@ export class Lexer {
                             this.tokens.push(new Statement(TokenTypes.MIENTRAS, this.lineIndex));
                         break;
 
-                        case TokenTypes.LET:
-                            this.tokens.push(new Statement(TokenTypes.LET, this.lineIndex));
+                        case TokenTypes.VAR:
+                            this.tokens.push(new Statement(TokenTypes.VAR, this.lineIndex));
                         break;
 
                         case TokenTypes.SI:
@@ -128,7 +139,19 @@ export class Lexer {
                         case TokenTypes.SINO:
                             this.tokens.push(new Statement(TokenTypes.SINO, this.lineIndex));
                         break;
-                        
+
+                        case TokenTypes.VERDAD:
+                            this.tokens.push(new Literal(TokenTypes.LITERAL, TokenTypes.VERDAD, this.lineIndex))
+                        break;
+
+                        case TokenTypes.FALSO:
+                            this.tokens.push(new Literal(TokenTypes.LITERAL, TokenTypes.FALSO, this.lineIndex))
+                        break;
+
+                        case TokenTypes.NULO:
+                            this.tokens.push(new Literal(TokenTypes.LITERAL, TokenTypes.NULO, this.lineIndex))
+                        break;
+
                         default:
                             this.tokens.push(new Identifier(TokenTypes.IDENTIFIER, word, this.lineIndex));
                         break;
@@ -173,6 +196,14 @@ export class Lexer {
 
     abort(mes, errCode){
         console.error("LexingError. " + mes); process.exit(errCode);
+    }
+
+    printLogs(){
+        console.log("Lexer Logs--------");
+        for (let log of this.logs){
+            console.log(log);
+        }
+        console.log("------------------\n\n");
     }
 
 }

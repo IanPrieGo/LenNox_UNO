@@ -8,9 +8,6 @@ import ps from 'prompt-sync';
 
 const prompt = ps();
 
-// let username = prompt("Enter your Name ");
-// console.log(`Username is: ${username}`)
-
 let outPut;
 
 let source = fs.readFileSync('./main.nx', 'utf8');
@@ -26,7 +23,10 @@ let emitter = new Emitter();
 
 
 lexer.process(source);
+// lexer.printLogs();
 parser.parseProgram(lexer.tokens);
+// parser.printLogs();
 emitter.giveVariableInfo(parser.declaredVariables);
 emitter.giveCommands(parser.result);
 emitter.createJavaFile('./MAIN.java');
+// emitter.printLogs();

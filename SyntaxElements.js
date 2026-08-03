@@ -1,11 +1,9 @@
 import * as Expresion from "./Expresion.js";
 
 export class Comando {
-
     constructor(comando){
         this.comando =  comando;
     }
-
 }
 
 
@@ -33,6 +31,14 @@ export class Primaria {
    
 }
 
+export class Condicional {
+    constructor(condicion, comandos, condicionalAlternativo){
+        this.condicion = condicion;
+        this.comandos = comandos;
+        this.condicionalAlternativo = condicionalAlternativo;
+    }
+}
+
 export class Asignacion{
     constructor(name, value, dataType){
         this.name = name;
@@ -42,15 +48,26 @@ export class Asignacion{
 
  
     toString(){
+        let value;
+        if (this.value ==  "nul"){
+            value = null;
+        } else if(this.value == "ver"){
+            value = true;
+        }if(this.value == "fal"){
+            value = false;
+        } else {
+            value = this.value.toString()
+        }
         return "Asignacion \n" + "Nombre Variable: " + this.name.toString() + ", Valor Asignado: " + this.value.toString();
     }
 
     toJava(emitter){
-        console.log("Asignando en Java")
+        emitter.logs.push("Asignando en Java")
         let assignedDataType = "";
         if (this.dataType != undefined){
             assignedDataType = this.dataType + " ";
         }
+        emitter.logs.push(`Nombre: ${this.name}, Valor: ${this.value}`)
         return "\t\t" + assignedDataType + this.name + " = " + this.value.toExpresion(emitter) +  ";"
     }
 
@@ -63,35 +80,35 @@ export class Creacion{
     }
 
     toString(){
-        return "Creacion \n" + "Nombre Variable: " + this.name.toString() + ", Valor Asignado: " + this.value.toString();
+        let value;
+        if (this.value == null) {
+            value = "null"
+        } else if(this.value == "Verdad"){
+            value = "true";
+        }else {
+            value = this.value.toString()
+        }
+        return "Creacion \n" + "Nombre Variable: " + this.name.toString() + ", Valor Asignado: " + value;
     }
     
     toJava(emitter){
-        console.log("Creando en Java");
-        console.log(this.value)
+        emitter.logs.push("Creando en Java");
+        emitter.logs.push(this.value)
         let assignedDataType = "Object ";
         if (this.dataType != undefined){
             assignedDataType = this.dataType;
         }
+
+        if (this.value == null) return "\t\t" + assignedDataType + this.name + ";"; 
         return "\t\t" + assignedDataType + this.name + " = " + this.value.toExpresion(emitter) +  ";"
     }
 }
 export class Ciclo{}
-export class Condicional{}
 
 export class Impresion{
     constructor(valorAImprimir){
         this.valorAImprimir = valorAImprimir;
         this.valorFinal;
-
-        // if (this.valorAImprimir instanceof Expresion.BINARY){
-        //     this.valorFinal = this.valorAImprimir.firstOperand.value
-        // }
-
-        console.log("xd");
-        console.log(this.valorAImprimir);
-        // console.log(this.valorAImprimir.firstOperand);
-        // console.log(this.valorAImprimir.secondOperand);
     }
     toJava(){
         return "\t\tSystem.out.println(" + this.valorAImprimir.concatenate() +");";

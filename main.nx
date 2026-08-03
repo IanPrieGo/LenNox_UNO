@@ -1,12 +1,1 @@
-Let xd = 0; Let lol = 10; Let pepe = 5520;
-xd = 50;
-
-Let c = xd - lol;
-pepe = 0;
-
-Imprime {
-    "xd: " + xd + "\n" +
-    "lol: " + lol + "\n" +
-    "pepe: " + pepe + "\n" +
-    "c: " + c + "\n"
-};
+Imprime{nul};
