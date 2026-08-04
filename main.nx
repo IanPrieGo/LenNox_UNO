@@ -1,3 +1,5 @@
-Si(fal){
-    Imprime{"No mames, si funciona el if xd"};
+Var cond = fal;
+
+Si(cond){
+    Imprime{"El diablo"};
 }
