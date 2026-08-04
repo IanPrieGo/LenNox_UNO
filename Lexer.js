@@ -80,7 +80,7 @@ export class Lexer {
                 break;
 
                 case "(":
-                    this.tokens.push(new Token(TokenTypes.PARENTESISABIERTO, null, this.lineIndex));
+                    this.tokens.push(new Token(TokenTypes.PARENTSISABIERTO, null, this.lineIndex));
                 break;
 
                 case ")":

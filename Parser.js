@@ -1,6 +1,6 @@
 import * as TokenType from "./TokenTypes.js";
 import * as Exp from "./Expresion.js";
-import * as Syntax  from "./SyntaxElements.js";
+import * as Comando  from "./Comandos.js";
 import Variable from "./Variable.js";
 import process from "node:process";
 
@@ -37,7 +37,8 @@ export class Parser {
             this.logs.push("   C"  + i + ". " + com.toString() + "\n");
             i++;
         }
-                
+        
+        this.printLogs();
         this.result = commands;
 
     }
@@ -64,11 +65,12 @@ export class Parser {
             break;
 
             case  TokenType.SI:
-                // console.log("   Asignacion");
+                console.log("   Condicional");
                 comando = this.condicional();
             break;
 
             default:
+                console.log("Abort");
                 this.abort("Invalid Command", 1);
             break;
 
@@ -81,7 +83,46 @@ export class Parser {
     }
 
     condicional(){
+        this.logs.push(this.currentToken());
         
+        this.advanceIndex(1);
+        this.logs.push(this.currentToken());
+        if (this.currentToken() != TokenType.PARENTSISABIERTO){
+            this.abort("Expecting \" ( \" ");
+        }
+        
+        this.advanceIndex(1);
+        this.logs.push(this.currentToken());
+
+        if (
+            this.currentToken().value != false &&
+            this.currentToken().value != true 
+        ){
+            
+            this.abort("Expectig Boolean Literal")
+        }
+
+        let condicion = this.currentToken();
+
+        this.advanceIndex(1);
+        this.logs.push(this.currentToken());
+        if (this.currentToken() != TokenType.PARENTESISCERRADO){
+            this.abort("Expecting \" ) \" ");
+        }
+
+        this.advanceIndex(1);
+        this.logs.push(this.currentToken());
+        if (this.currentToken() != TokenType.LLAVEABIERTA){
+            this.abort("Expecting \" { \" ");
+        }
+
+        this.advanceIndex(1);
+        this.logs.push(this.currentToken());
+        let command = this.command();
+        console.log("Condicional procesado sin errores")
+
+        return new Comando.Condicional(condicion, command);
+
     }
 
     asignacion(){
@@ -126,7 +167,7 @@ export class Parser {
 
         
 
-        return new Syntax.Asignacion(variableName, variableValue);
+        return new Comando.Asignacion(variableName, variableValue);
     }
     
     creacion(){
@@ -194,7 +235,7 @@ export class Parser {
             `
         );
         this.declaredVariables.push(new Variable(variableName, variableValue, variableType));
-        return new Syntax.Creacion(variableName, variableValue);
+        return new Comando.Creacion(variableName, variableValue);
     }
 
     impresion(){
@@ -224,7 +265,7 @@ export class Parser {
         }
 
         
-        return new Syntax.Impresion(valorAImprimir);
+        return new Comando.Impresion(valorAImprimir);
     }
 
     expresion(){
@@ -248,7 +289,7 @@ export class Parser {
     
     divMult(){
 
-        let expresion = new Exp.PRIMARY(this.currentToken());
+        let expresion = new Exp.LITERAL(this.currentToken());
 
         while(this.match(this.nextToken(), [TokenType.MULTIPLY, TokenType.DIVIDE])){
 
@@ -263,7 +304,7 @@ export class Parser {
 
     }
 
-    primary(){
+    LITERAL(){
 
 
     }
@@ -289,7 +330,9 @@ export class Parser {
     }
 
     abort(mes, errCode){
-        console.error("ParsingError. " + mes + ` at line ${this.currentToken().line} on token [ ${this.currentToken()} ] `); process.exit(errCode);
+        console.error("ParsingError. " + mes + ` at line ${this.currentToken().line} on token [ ${this.currentToken()} ] `); 
+        this.printLogs();
+        process.exit(errCode);
     }
 
     printLogs(){

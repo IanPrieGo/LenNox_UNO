@@ -1,1 +1,3 @@
-Imprime{nul};
+Si(fal){
+    Imprime{"No mames, si funciona el if xd"};
+}

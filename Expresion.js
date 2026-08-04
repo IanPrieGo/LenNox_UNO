@@ -29,13 +29,13 @@ export class BINARY{
     }
 }
 
-export class PRIMARY{
+export class LITERAL{
     constructor(token){
         this.token = token;
     }
 
     toString(){
-        return "PRIMARY("+ this.token.toString() + ")";
+        return "Literal("+ this.token.toString() + ")";
     }
 
     toExpresion(emitter){

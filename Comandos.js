@@ -1,41 +1,20 @@
 import * as Expresion from "./Expresion.js";
 
-export class Comando {
-    constructor(comando){
-        this.comando =  comando;
-    }
-}
-
-
-export class Igualdad {
-
-}
-
-export class Diferenciacion {
-
-}
-
-export class SumRes {
-
-}
-
-export class DivMul {
-    
-}
-
-export class Negacion {
-
-}
-
-export class Primaria {
-   
-}
-
 export class Condicional {
     constructor(condicion, comandos, condicionalAlternativo){
+        let Sino = null;
         this.condicion = condicion;
         this.comandos = comandos;
-        this.condicionalAlternativo = condicionalAlternativo;
+        if (condicionalAlternativo != undefined) Sino = condicionalAlternativo;
+        this.condicionalAlternativo = Sino;
+    }
+
+    toString(){
+        return `Condicional\n Condicion sin Evaluar: ${this.condicion}, \nComandos Integrados:${this.comandos}`
+    }
+
+    toJava(emitter){
+        return "\t\tif(" + this.condicion.value + "){\n\t\t" + this.comandos.toJava(emitter) + "\n\t\t}"
     }
 }
 

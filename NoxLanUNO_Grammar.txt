@@ -78,6 +78,13 @@ Fin de una regla
 
 
 
+/
+Comandos:
+    Instrucciones para la computadora, que pueden estar compuestas de expresiones, 
+Tokens
+
+Exprsiones
+Variables
 
 
 # Desintegracion de numeros grandes en texto
