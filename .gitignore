@@ -1,3 +1,5 @@
 *.java
 ejemplo.nx
-node_modules/
+node_modules/ansi-regex
+node_modules/strip-ansi
+node_modules/prompt-sync
