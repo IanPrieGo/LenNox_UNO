@@ -1,5 +1,3 @@
-Var cond = fal;
-
-Si(cond){
+Si(fal){
     Imprime{"El diablo"};
 }
