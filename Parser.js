@@ -46,32 +46,31 @@ export class Parser {
     command(){
         
         let comando;
+        if (
+            this.currentToken().type != TokenType.IDENTIFICADOR && 
+            this.currentToken().type != TokenType.PALABRA_RESERVADA 
+        ){this.abort("Invalid Command", 1)}
 
-        switch (this.currentToken().type){
+        switch (this.currentToken().value){
 
-            case TokenType.VAR:
+            case "Var":
                 // console.log("   Creacion");
                 comando = this.creacion();
             break;
 
-            case  TokenType.IMPRIME:
+            case  "Imprime":
                 // console.log("   Impresion");
                 comando = this.impresion();
             break;
 
-            case  TokenType.IDENTIFIER:
-                // console.log("   Asignacion");
-                comando = this.asignacion();
-            break;
-
-            case  TokenType.SI:
-                console.log("   Condicional");
+            case  "Si":
+                // console.log("   Condicional");
                 comando = this.condicional();
             break;
 
             default:
-                console.log("Abort");
-                this.abort("Invalid Command", 1);
+                // console.log("   Asignacion");
+                this.asignacion();
             break;
 
         }
@@ -82,12 +81,13 @@ export class Parser {
 
     }
 
+    //COMANDOS
     condicional(){
         this.logs.push(this.currentToken());
         
         this.advanceIndex(1);
         this.logs.push(this.currentToken());
-        if (this.currentToken() != TokenType.PARENTSISABIERTO){
+        if (this.currentToken().value != "("){
             this.abort("Expecting \" ( \" ");
         }
         
@@ -95,30 +95,36 @@ export class Parser {
         this.logs.push(this.currentToken());
 
         if (
-            this.currentToken().value != false &&
-            this.currentToken().value != true 
+            this.currentToken().value != "ver" &&
+            this.currentToken().value != "fal" 
         ){
             
             this.abort("Expectig Boolean Literal")
         }
 
-        let condicion = this.currentToken();
+        let condicion = this.expresion();
 
         this.advanceIndex(1);
         this.logs.push(this.currentToken());
-        if (this.currentToken() != TokenType.PARENTESISCERRADO){
+        if (this.currentToken().value != ")"){
             this.abort("Expecting \" ) \" ");
         }
 
         this.advanceIndex(1);
         this.logs.push(this.currentToken());
-        if (this.currentToken() != TokenType.LLAVEABIERTA){
+        if (this.currentToken().value != "{"){
             this.abort("Expecting \" { \" ");
         }
 
         this.advanceIndex(1);
         this.logs.push(this.currentToken());
         let command = this.command();
+
+        
+        this.logs.push(this.currentToken());
+        if (this.currentToken().value != "}"){
+            this.abort("Expecting \" } \" ");
+        }
         console.log("Condicional procesado sin errores")
 
         return new Comando.Condicional(condicion, command);
@@ -242,7 +248,7 @@ export class Parser {
         
         let valorAImprimir;
         this.advanceIndex(1);
-        if (this.currentToken().type != TokenType.LLAVEABIERTA){
+        if (this.currentToken().value != "{"){
             this.abort("Expecting \" { \"", 1);
         }
 
@@ -250,12 +256,11 @@ export class Parser {
         // console.log(this.currentToken())
         valorAImprimir = this.expresion();
         this.logs.push(valorAImprimir);
-        this.logs.push("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
 
         if (valorAImprimir == undefined) this.abort("Expecting Expression", 1);
 
         this.advanceIndex(1);
-         if (this.currentToken().type != TokenType.LLAVECERRADA){
+         if (this.currentToken().value != "}"){
             this.abort("Expecting \" } \"", 1);
         }
 
@@ -268,7 +273,16 @@ export class Parser {
         return new Comando.Impresion(valorAImprimir);
     }
 
+    //EXPRESIONES
     expresion(){
+        return this.igualdad();
+    }
+
+    igualdad(){
+        return this.diferenciacion();
+    }
+
+    diferenciacion(){
         return this.sumaResta();
     }
 
@@ -289,13 +303,13 @@ export class Parser {
     
     divMult(){
 
-        let expresion = new Exp.LITERAL(this.currentToken());
+        let expresion = this.negacion();
 
         while(this.match(this.nextToken(), [TokenType.MULTIPLY, TokenType.DIVIDE])){
 
             let operator = new Exp.OPERATOR(this.nextToken());
             this.advanceIndex(2);
-            let secondOperand = this.divMult();
+            let secondOperand = this.negacion();
             
             expresion = new Exp.BINARY(expresion, operator, secondOperand)
         }
@@ -304,11 +318,15 @@ export class Parser {
 
     }
 
-    LITERAL(){
-
-
+    negacion(){
+        return this.primaria()
     }
 
+    primaria(){
+        return new Exp.LITERAL(this.currentToken());
+    }
+
+    //Metodos Ayudantes
     match(token, typesToCheck){
         for (let type of typesToCheck){
             if(token.type == type)

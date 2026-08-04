@@ -8,7 +8,7 @@ export class Token {
     }
 
     toString(){
-        return this.type;
+        return this.type + " \" " + this.value + " \"";
     }
 }
 

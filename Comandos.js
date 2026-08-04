@@ -2,19 +2,33 @@ import * as Expresion from "./Expresion.js";
 
 export class Condicional {
     constructor(condicion, comandos, condicionalAlternativo){
-        let Sino = null;
+        // if (condicion.token.value == "ver" ) {
+        //     console.log("Condicion Verdaderaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+        //     condicion = true;
+        // } else if (condicion.token.value == "fal") {
+        //     console.log("Condicion Falsaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+        //     condicion = false;
+        // }
+
         this.condicion = condicion;
         this.comandos = comandos;
-        if (condicionalAlternativo != undefined) Sino = condicionalAlternativo;
-        this.condicionalAlternativo = Sino;
+        this.condicionalAlternativo = condicionalAlternativo;
     }
 
     toString(){
-        return `Condicional\n Condicion sin Evaluar: ${this.condicion}, \nComandos Integrados:${this.comandos}`
+        return `Condicional\n Condicion sin Evaluar: ${this.condicion}, \nComandos Integrados:${this.comandos}, \nCondicional Alternativo: ${this.condicionalAlternativo}`;
     }
 
     toJava(emitter){
-        return "\t\tif(" + this.condicion.value + "){\n\t\t" + this.comandos.toJava(emitter) + "\n\t\t}"
+        let condicionFinal;
+        if (this.condicion.token.value == "ver" ) {
+            condicionFinal = true;
+        } else if (this.condicion.token.value == "fal") {
+            condicionFinal = false;
+        } else {
+            condicionFinal = this.condicion.token.value;
+        }
+        return "\t\tif(" + condicionFinal + "){\n\t\t" + this.comandos.toJava(emitter) + "\n\t\t}"
     }
 }
 

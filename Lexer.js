@@ -1,7 +1,8 @@
 import * as TokenTypes from "./TokenTypes.js";
-import {Token, Statement, Operator, Literal, Identifier} from "./Token.js";
+import {Token} from "./Token.js";
 import process from "node:process";
 import { clearScreenDown } from "node:readline";
+import { match } from "node:assert";
 
 export class Lexer {
     constructor(){
@@ -47,49 +48,39 @@ export class Lexer {
             // console.log(this.currentChar()  + ", "+ this.charIndex);
             switch(this.currentChar()){
                 
-                case TokenTypes.PLUS:
-                    this.tokens.push(new Operator(TokenTypes.PLUS, this.lineIndex));
-                break;
-                
-                case TokenTypes.MINUS:
-                    this.tokens.push(new Operator(TokenTypes.MINUS, this.lineIndex));
-                break;
-                
-                case TokenTypes.MULTIPLY:
-                    this.tokens.push(new Operator(TokenTypes.MULTIPLY, this.lineIndex));
-                break;
-                
-                case TokenTypes.DIVIDE:
-                    this.tokens.push(new Operator(TokenTypes.DIVIDE, this.lineIndex));
+                case "+":
+                case "-":
+                case "*":
+                case "/":
+                    this.tokens.push(new Token(TokenTypes.OPERADOR, this.currentChar(), this.lineIndex));
                 break;
 
+                case ">":
+                case "<":
+                case "!":
                 case "=":
-                    this.tokens.push(new Token(TokenTypes.EQUAL, null, this.lineIndex));
+                    if (this.nextChar() == "="){
+                        this.tokens.push(new Token(TokenTypes.OPERADOR, this.currentChar() + this.nextChar(), this.lineIndex));
+                    } else {
+                        this.tokens.push(new Token(TokenTypes.OPERADOR, this.currentChar(), this.lineIndex));
+                    }
                 break;
 
                 case ";":
-                    this.tokens.push(new Statement(TokenTypes.EOC, this.lineIndex));
+                    this.tokens.push(new Token(TokenTypes.EOC, this.currentChar(), this.lineIndex));
                 break;
 
                 case "{":
-                    this.tokens.push(new Token(TokenTypes.LLAVEABIERTA, null, this.lineIndex));
+                case "(":
+                    this.tokens.push(new Token(TokenTypes.ABRIR_GRUPO, this.currentChar(), this.lineIndex));
                 break;
 
                 case "}":
-                    this.tokens.push(new Token(TokenTypes.LLAVECERRADA, null, this.lineIndex));
-                break;
-
-                case "(":
-                    this.tokens.push(new Token(TokenTypes.PARENTSISABIERTO, null, this.lineIndex));
-                break;
-
                 case ")":
-                    this.tokens.push(new Token(TokenTypes.PARENTESISCERRADO, null, this.lineIndex));
+                    this.tokens.push(new Token(TokenTypes.CERRRA_GRUPO, this.currentChar(), this.lineIndex));
                 break;
 
-                case "\"":
-                    // console.log("Double Quotes!");
-                    
+                case "\"":                    
                     let cadena =  "";
                     let quit = false;
                     let keyPos;
@@ -98,7 +89,7 @@ export class Lexer {
                         cadena += this.currentChar();
                         this.charIndex++;
                     }
-                    this.tokens.push(new Literal(TokenTypes.CADENA, cadena, this.lineIndex));
+                    this.tokens.push(new Token(TokenTypes.LITERAL, cadena, this.lineIndex));
 
                 break;
 
@@ -110,7 +101,7 @@ export class Lexer {
                         this.charIndex++;
                         num += this.currentChar();
                     }
-                    this.tokens.push(new Literal(TokenTypes.LITERAL, num, this.lineIndex));
+                    this.tokens.push(new Token(TokenTypes.LITERAL, num, this.lineIndex));
 
                 } else if(this.isAlpha(this.currentChar())){
                     let word =  this.currentChar();
@@ -120,40 +111,19 @@ export class Lexer {
                     }
 
                     switch(word){
-                        case TokenTypes.IMPRIME:
-                            this.tokens.push(new Statement(TokenTypes.IMPRIME, this.lineIndex));
-                        break;
-
-                        case TokenTypes.MIENTRAS:
-                            this.tokens.push(new Statement(TokenTypes.MIENTRAS, this.lineIndex));
-                        break;
-
-                        case TokenTypes.VAR:
-                            this.tokens.push(new Statement(TokenTypes.VAR, this.lineIndex));
-                        break;
-
-                        case TokenTypes.SI:
-                            this.tokens.push(new Statement(TokenTypes.SI, this.lineIndex));
-                        break;
-
-                        case TokenTypes.SINO:
-                            this.tokens.push(new Statement(TokenTypes.SINO, this.lineIndex));
-                        break;
-
-                        case TokenTypes.VERDAD:
-                            this.tokens.push(new Literal(TokenTypes.LITERAL, TokenTypes.VERDAD, this.lineIndex))
-                        break;
-
-                        case TokenTypes.FALSO:
-                            this.tokens.push(new Literal(TokenTypes.LITERAL, TokenTypes.FALSO, this.lineIndex))
-                        break;
-
-                        case TokenTypes.NULO:
-                            this.tokens.push(new Literal(TokenTypes.LITERAL, TokenTypes.NULO, this.lineIndex))
+                        case "Imprime":
+                        case "Mientras":
+                        case "Var":
+                        case "Si":
+                        case "Sino":
+                        case "ver":
+                        case "fal":
+                        case "nul":
+                            this.tokens.push(new Token(TokenTypes.PALABRA_RESERVADA, word, this.lineIndex));
                         break;
 
                         default:
-                            this.tokens.push(new Identifier(TokenTypes.IDENTIFIER, word, this.lineIndex));
+                            this.tokens.push(new Token(TokenTypes.IDENTIFICADOR, word, this.lineIndex));
                         break;
                     }
                     

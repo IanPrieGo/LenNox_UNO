@@ -35,18 +35,21 @@ export class LITERAL{
     }
 
     toString(){
-        return "Literal("+ this.token.toString() + ")";
+        return this.token.toString();
     }
 
-    toExpresion(emitter){
+    toExpresion(){
         return this.token.value;
     }
 
     concatenate(){
-        if (this.token.type == "cadena"){
-            return "\"" + this.token.value + "\"";
-        }
-        return this.token.value;
+        return "\"" + this.token.value + "\"";
+    }
+
+    toValue(){
+        let valor;
+        
+        return valor;
     }
 }
 

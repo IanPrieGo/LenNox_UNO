@@ -1,55 +1,33 @@
-programa:: 
-    {linea};
-
-linea:: 
-    (statement | expresion) "newLine";
-
-declaracion:: 
-    "imprime" (expresion | string) "newLine" |
-    "let" IDENTIFIER "=" (expresion | IDENTIFIER) "newLine" |
-    IDENTIFIER "=" (expresion | IDENTIFIER) "newLine";
-
-expresion:: 
-    sum-res;
-
-sum-res:: 
-    div-mul {("+" | "-") div-mul} "newLine";
-
-div-mul:: 
-    NUMERO {("/" | "*") NUMERO} "newLine" ;
-
---------
-
 Programa:: 
-    {Linea};
+    {Comando}++;
 
-Linea:: 
-    (Declaracion | Expresion) "newLine";
+Comando:: 
+    Declaracion "newLine";
 
 Expresion::
     Igualdad;
         
-    Igualdad::
-        Diferenciacion { ("!=" | "==") Diferenciacion};
+Igualdad::
+    Diferenciacion { ("!=" | "==") Diferenciacion}++;
 
-    Diferenciacion::
-        SumRes { ("<"  | "<=" | ">" | ">=") SumRes};
+Diferenciacion::
+    SumRes { ("<"  | "<=" | ">" | ">=") SumRes}++;
 
-    SumRes::
-        DivMul { ("+" | "-") DivMul };
+SumRes::
+    DivMul { ("+" | "-") DivMul }++;
 
-    DivMul::
-        Negacion { ("*" | "/") Negacion };
+DivMul::
+    Negacion { ("*" | "/") Negacion }++;
 
-    Negacion::
-        Primaria | ("!" | "-")Negacion;
+Negacion::
+    Primaria | ("!" | "-")Negacion;
 
-    Primaria:: 
-        NUMERO | "verdadero" | "falso" | CADENA | "nulo" | "(" Expresion ")" | IDENTIFICADOR;
+Primaria:: 
+    NUMERO | "ver" | "fal" | CADENA | "nul" | "(" Expresion ")" | IDENTIFICADOR;
 
 Declaracion:: 
-    "Imprime" (Expresion) |
-    "Let" IDENTIFICADOR "=" Expresion |
+    "Imprime" "{" Expresion "}"|
+    "Var" IDENTIFICADOR "=" Expresion |
     IDENTIFICADOR "=" Expresion
     "Si" "(" Expresion ")" "{" CODIGO "}" 
     {"Sino" "Si" "(" Expresion ")" "{" CODIGO "}"} 
@@ -60,9 +38,19 @@ Palabras Clave::
     "Si" | "Sino" | "Imprime" | "Mientras" | "Para";
 
 
+"Si" "(" Expresion ")" "{" {Comando}++ "}" 
+{"Sino" "Si" "(" Expresion ")" "{" {Comando}++ "}"}++
+{"Sino" "{" {Comando}++ "}"}
+
 
 < {} >
+El contenido entre los Corchetes se repite 0 o 1 vez
+
+< {}++ >
 El contenido entre los Corchetes se repite 0 o mas veces
+
+< [] >
+El contenido entre los Corchetes se repite 1 o mas veces
 
 < | >
 El contenido a los lados de la Barra Vertical...
@@ -76,15 +64,6 @@ Previo a este, esta el nombre de la regla, y despues su definicion
 < ; >
 Fin de una regla
 
-
-
-/
-Comandos:
-    Instrucciones para la computadora, que pueden estar compuestas de expresiones, 
-Tokens
-
-Exprsiones
-Variables
 
 
 # Desintegracion de numeros grandes en texto
