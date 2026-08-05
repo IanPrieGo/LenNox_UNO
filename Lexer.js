@@ -81,14 +81,16 @@ export class Lexer {
                 break;
 
                 case "\"":                    
-                    let cadena =  "";
+                    let cadena =  "\"";
                     let quit = false;
                     let keyPos;
                     this.charIndex++;
                     while(this.currentChar() != "\""){
+                        if (this.currentChar() == undefined) this.abort(`No matching " for " at line ${this.lineIndex}`, 1);
                         cadena += this.currentChar();
                         this.charIndex++;
                     }
+                    cadena += "\"";
                     this.tokens.push(new Token(TokenTypes.LITERAL, cadena, this.lineIndex));
 
                 break;
@@ -116,10 +118,13 @@ export class Lexer {
                         case "Var":
                         case "Si":
                         case "Sino":
+                            this.tokens.push(new Token(TokenTypes.PALABRA_RESERVADA, word, this.lineIndex));
+                        break;
+
                         case "ver":
                         case "fal":
                         case "nul":
-                            this.tokens.push(new Token(TokenTypes.PALABRA_RESERVADA, word, this.lineIndex));
+                            this.tokens.push(new Token(TokenTypes.LITERAL, word, this.lineIndex));
                         break;
 
                         default:

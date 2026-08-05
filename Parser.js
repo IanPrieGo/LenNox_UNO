@@ -27,6 +27,8 @@ export class Parser {
 
             if (currentCommand != undefined) {
                 commands.push(currentCommand);
+            } else {
+                break
             }
         }
         
@@ -46,6 +48,9 @@ export class Parser {
     command(){
         
         let comando;
+
+        if (this.currentToken().type == TokenType.EOF) return undefined;
+
         if (
             this.currentToken().type != TokenType.IDENTIFICADOR && 
             this.currentToken().type != TokenType.PALABRA_RESERVADA 
@@ -248,23 +253,27 @@ export class Parser {
         
         let valorAImprimir;
         this.advanceIndex(1);
+        this.logs.push(this.currentToken());
         if (this.currentToken().value != "{"){
             this.abort("Expecting \" { \"", 1);
         }
 
         this.advanceIndex(1);
-        // console.log(this.currentToken())
+        this.logs.push("\t+=>Procesando Expresion");
+        this.logs.push(this.currentToken());
         valorAImprimir = this.expresion();
         this.logs.push(valorAImprimir);
 
         if (valorAImprimir == undefined) this.abort("Expecting Expression", 1);
 
         this.advanceIndex(1);
+        this.logs.push(this.currentToken());
          if (this.currentToken().value != "}"){
             this.abort("Expecting \" } \"", 1);
         }
 
         this.advanceIndex(1);
+        this.logs.push(this.currentToken());
         if (this.currentToken().type != TokenType.EOC){
             this.abort("Expecting \" ; \"", 1);
         }
@@ -288,12 +297,14 @@ export class Parser {
 
     sumaResta(){
         let expresion =  this.divMult();
+        this.logs.push("+ Primer Token:" + this.currentToken());
 
-        while(this.match(this.nextToken(), [TokenType.PLUS, TokenType.MINUS])){
+        while(this.match(this.nextToken(), ["-", "+"])){
 
             let operator = new Exp.OPERATOR(this.nextToken());
             this.advanceIndex(2);
             let secondOperand = this.divMult();
+            this.logs.push("+ Segundo Token:" + this.currentToken());
             
             expresion = new Exp.BINARY(expresion, operator, secondOperand)
         }
@@ -305,7 +316,7 @@ export class Parser {
 
         let expresion = this.negacion();
 
-        while(this.match(this.nextToken(), [TokenType.MULTIPLY, TokenType.DIVIDE])){
+        while(this.match(this.nextToken(), ["*", "/"])){
 
             let operator = new Exp.OPERATOR(this.nextToken());
             this.advanceIndex(2);
@@ -327,9 +338,9 @@ export class Parser {
     }
 
     //Metodos Ayudantes
-    match(token, typesToCheck){
-        for (let type of typesToCheck){
-            if(token.type == type)
+    match(token, valuesToCheck){
+        for (let value of valuesToCheck){
+            if(token.value == value)
             return true;
         }
         return false;

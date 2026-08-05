@@ -43,7 +43,10 @@ export class LITERAL{
     }
 
     concatenate(){
-        return "\"" + this.token.value + "\"";
+        if (this.token.type.indexOf("\"") > -1){
+            return "\"" +this.token.value + "\"";
+        };
+        return this.token.value;
     }
 
     toValue(){
@@ -67,6 +70,6 @@ export class OPERATOR{
     // }
 
     concatenate(){
-        return this.token.type;
+        return this.token.value;
     }
 }
