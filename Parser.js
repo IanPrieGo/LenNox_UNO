@@ -3,6 +3,7 @@ import * as Exp from "./Expresion.js";
 import * as Comando  from "./Comandos.js";
 import Variable from "./Variable.js";
 import process from "node:process";
+import chalk from "chalk";
 
 export class Parser {
     constructor(tokens){
@@ -21,7 +22,7 @@ export class Parser {
         this.tokenList = tokens;
 
         let commands = [];
-        while (!this.match(this.currentToken(), [TokenType.EOF])){
+        while (!this.match(this.currentToken(), [TokenType.FDA])){
             
             let currentCommand = this.command();
 
@@ -49,26 +50,23 @@ export class Parser {
         
         let comando;
 
-        if (this.currentToken().type == TokenType.EOF) return undefined;
+        if (this.currentToken().type == TokenType.FDA) return undefined;
 
-        if (
-            this.currentToken().type != TokenType.IDENTIFICADOR && 
-            this.currentToken().type != TokenType.PALABRA_RESERVADA 
-        ){this.abort("Invalid Command", 1)}
 
-        switch (this.currentToken().value){
 
-            case "Var":
+        switch (this.currentToken().type){
+
+            case TokenType.VAR:
                 // console.log("   Creacion");
                 comando = this.creacion();
             break;
 
-            case  "Imprime":
+            case  TokenType.IMPRIME:
                 // console.log("   Impresion");
                 comando = this.impresion();
             break;
 
-            case  "Si":
+            case  TokenType.SI:
                 // console.log("   Condicional");
                 comando = this.condicional();
             break;
@@ -92,7 +90,7 @@ export class Parser {
         
         this.advanceIndex(1);
         this.logs.push(this.currentToken());
-        if (this.currentToken().value != "("){
+        if (this.currentToken().type != TokenType.PARENTESIS_ABIERTO){
             this.abort("Expecting \" ( \" ");
         }
         
@@ -100,8 +98,8 @@ export class Parser {
         this.logs.push(this.currentToken());
 
         if (
-            this.currentToken().value != "ver" &&
-            this.currentToken().value != "fal" 
+            this.currentToken().type != TokenType.VERDAD &&
+            this.currentToken().type != TokenType.FALSO
         ){
             
             this.abort("Expectig Boolean Literal")
@@ -111,13 +109,13 @@ export class Parser {
 
         this.advanceIndex(1);
         this.logs.push(this.currentToken());
-        if (this.currentToken().value != ")"){
+        if (this.currentToken().type != TokenType.PARENTESIS_CERRADO){
             this.abort("Expecting \" ) \" ");
         }
 
         this.advanceIndex(1);
         this.logs.push(this.currentToken());
-        if (this.currentToken().value != "{"){
+        if (this.currentToken().type != TokenType.LLAVE_ABIERTA){
             this.abort("Expecting \" { \" ");
         }
 
@@ -127,7 +125,7 @@ export class Parser {
 
         
         this.logs.push(this.currentToken());
-        if (this.currentToken().value != "}"){
+        if (this.currentToken().type != TokenType.LLAVE_CERRADA){
             this.abort("Expecting \" } \" ");
         }
         console.log("Condicional procesado sin errores")
@@ -137,34 +135,41 @@ export class Parser {
     }
 
     asignacion(){
-        let variableName = this.currentToken().value;
+        let variableName = this.currentToken().lexeme;
         let variableValue;
 
         this.advanceIndex(1);
 
-        if (this.currentToken() != TokenType.EQUAL){
+        if (this.currentToken().type != TokenType.IGUAL){
             this.abort("Expecting \" = \" ");
         }
 
         this.advanceIndex(1);
 
-        if (this.currentToken() == TokenType.IDENTIFIER){
-            let isDeclared = false;
-            for (let variable of this.declaredVariables){
-                if (variable.nombre == this.currentToken().value){
-                    isDeclared = true;
+        switch (this.currentToken().type){
+            case TokenType.IDENTIFICADOR:
+                let isDeclared = false;
+                for (let variable of this.declaredVariables){
+                    if (variable.nombre == this.currentToken().value){
+                        isDeclared = true;
+                    }
+                    // console.log(variable.nombre);
+                    // console.log(this.currentToken().value);
+                    // console.log();
                 }
-                // console.log(variable.nombre);
-                // console.log(this.currentToken().value);
-                // console.log();
-            }
-            if (!isDeclared){
-                console.log(isDeclared);
-                this.abort(`Se intento una operacion con una variable no declarada\nValor Token: ${this.currentToken()}`, 1)
-            }
+                if (!isDeclared){
+                    console.log(isDeclared);
+                    this.abort(`Se intento una operacion con una variable no declarada\nValor Token: ${this.currentToken()}`, 1)
+                }
+                break;
+            case TokenType.VERDAD:
+            case TokenType.FALSO:
+            case TokenType.NUMERO:
+            case TokenType.CADENA:
+                break;
+            default:
+                this.abort("Expecting Literal  ", 1);
 
-        } else if (this.currentToken().type != TokenType.LITERAL){
-            this.abort("Expecting Literal  ", 1);
         }
 
         this.logs.push(this.currentToken());
@@ -172,11 +177,9 @@ export class Parser {
         variableValue = this.expresion();
 
         this.advanceIndex(1);
-        if (this.currentToken().type != TokenType.EOC){
+        if (this.currentToken().type != TokenType.PUNTO_COMA){
             this.abort("Expecting \" ; \"", 1);
         }
-
-        
 
         return new Comando.Asignacion(variableName, variableValue);
     }
@@ -188,11 +191,11 @@ export class Parser {
         let variableType = "int";
 
         this.advanceIndex(1);
-        if (this.currentToken().type != TokenType.IDENTIFIER){
+        if (this.currentToken().type != TokenType.IDENTIFICADOR){
             this.abort("Expecting Identifier ", 1);
         }
 
-        variableName = this.currentToken().value;
+        variableName = this.currentToken().lexeme;
 
         for (let variable of this.declaredVariables){
             if (variable.nombre == variableName){
@@ -228,14 +231,14 @@ export class Parser {
 
         this.advanceIndex(1);
 
-        if (this.currentToken().type == "="){
+        if (this.currentToken().type == TokenType.IGUAL){
             this.advanceIndex(1);
             variableValue = this.expresion();
             this.advanceIndex(1);
         } 
     
 
-        if (this.currentToken().type != TokenType.EOC){
+        if (this.currentToken().type != TokenType.PUNTO_COMA){
             this.abort("Expecting \" ; \"", 1);
         }
 
@@ -254,8 +257,8 @@ export class Parser {
         let valorAImprimir;
         this.advanceIndex(1);
         this.logs.push(this.currentToken());
-        if (this.currentToken().value != "{"){
-            this.abort("Expecting \" { \"", 1);
+        if (this.currentToken().type != TokenType.LLAVE_ABIERTA){
+            this.abort("Expecting \" { \" ");
         }
 
         this.advanceIndex(1);
@@ -268,13 +271,13 @@ export class Parser {
 
         this.advanceIndex(1);
         this.logs.push(this.currentToken());
-         if (this.currentToken().value != "}"){
-            this.abort("Expecting \" } \"", 1);
+        if (this.currentToken().type != TokenType.LLAVE_CERRADA){
+            this.abort("Expecting \" { \" ");
         }
 
         this.advanceIndex(1);
         this.logs.push(this.currentToken());
-        if (this.currentToken().type != TokenType.EOC){
+        if (this.currentToken().type != TokenType.PUNTO_COMA){
             this.abort("Expecting \" ; \"", 1);
         }
 
@@ -338,9 +341,9 @@ export class Parser {
     }
 
     //Metodos Ayudantes
-    match(token, valuesToCheck){
-        for (let value of valuesToCheck){
-            if(token.value == value)
+    match(token, typesToCheck){
+        for (let type of typesToCheck){
+            if(token.type == type)
             return true;
         }
         return false;
@@ -358,17 +361,24 @@ export class Parser {
         return this.tokenList[this.tokenIndex];
     }
 
-    abort(mes, errCode){
-        console.error("ParsingError. " + mes + ` at line ${this.currentToken().line} on token [ ${this.currentToken()} ] `); 
+    abort(mess, errCode){
+        console.error(chalk.redBright(
+            "ParsingError. " + mess + 
+            " at line " + this.currentToken().line + 
+            " on token [" +  this.currentToken() + "]")); 
         this.printLogs();
         process.exit(errCode);
     }
 
     printLogs(){
         console.log("Parser Logs--------");
-        for (let log of this.logs){
-            console.log(log);
-        }
+        if (this.logs.length == 0){
+            console.log("No Logs!");
+        } else {
+            for (let log of this.logs){
+                console.log(log);
+            }
+        }   
         console.log("------------------\n\n");
     }
 

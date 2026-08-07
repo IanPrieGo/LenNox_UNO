@@ -23,7 +23,7 @@ let emitter = new Emitter();
 
 
 lexer.process(source);
-// lexer.printLogs();
+lexer.printLogs();
 parser.parseProgram(lexer.tokens);
 // parser.printLogs();
 emitter.giveVariableInfo(parser.declaredVariables);

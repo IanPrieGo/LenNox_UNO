@@ -1,13 +1,14 @@
 import * as TokenTypes from "./TokenTypes.js";
 
 export class Token {
-    constructor(type, value, line){
+    constructor(type, lexeme, literal, line){
         this.type = type;
-        this.value = value;
+        this.lexeme = lexeme;
+        this.literal = literal;
         this.line = line;
     }
 
     toString(){
-        return this.type + " \" " + this.value + " \"";
+        return this.type + ", \" " + this.lexeme + " \"" + ",  " + this.literal + "";
     }
 }

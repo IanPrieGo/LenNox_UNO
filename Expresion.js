@@ -1,4 +1,6 @@
 
+import * as TokenType from "./TokenTypes.js";
+
 export class BINARY{
     constructor(firstOperand, operator, secondOperand){
         this.firstOperand = firstOperand;
@@ -17,7 +19,7 @@ export class BINARY{
     getDataType(emitter, variable){
         let type;
         for (let dv of emitter.declaredVariables){
-            if (dv.nombre == variable.token.value){
+            if (dv.nombre == variable.token.lexeme){
                 return dv.tipo;
             }
         }
@@ -39,14 +41,14 @@ export class LITERAL{
     }
 
     toExpresion(){
-        return this.token.value;
+        return this.token.lexeme;
     }
 
     concatenate(){
-        if (this.token.type.indexOf("\"") > -1){
-            return "\"" +this.token.value + "\"";
-        };
-        return this.token.value;
+        if (this.token.type == TokenType.CADENA){
+            return "\"" + this.token.lexeme + "\"";
+        }
+        return this.token.lexeme;
     }
 
     toValue(){
@@ -66,10 +68,10 @@ export class OPERATOR{
     }
 
     // toExpresion(){
-    //     return this.token.value;
+    //     return this.token.lexeme;
     // }
 
     concatenate(){
-        return this.token.value;
+        return this.token.lexeme;
     }
 }

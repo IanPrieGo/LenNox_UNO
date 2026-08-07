@@ -1,15 +1,9 @@
 import * as Expresion from "./Expresion.js";
+import * as TokenType from "./TokenTypes.js";
+import {Token} from "./Token.js";
 
 export class Condicional {
     constructor(condicion, comandos, condicionalAlternativo){
-        // if (condicion.token.value == "ver" ) {
-        //     console.log("Condicion Verdaderaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-        //     condicion = true;
-        // } else if (condicion.token.value == "fal") {
-        //     console.log("Condicion Falsaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-        //     condicion = false;
-        // }
-
         this.condicion = condicion;
         this.comandos = comandos;
         this.condicionalAlternativo = condicionalAlternativo;
@@ -21,12 +15,12 @@ export class Condicional {
 
     toJava(emitter){
         let condicionFinal;
-        if (this.condicion.token.value == "ver" ) {
+        if (this.condicion.token.type == TokenType.VERDAD ) {
             condicionFinal = true;
-        } else if (this.condicion.token.value == "fal") {
+        } else if (this.condicion.token.type == TokenType.FALSO) {
             condicionFinal = false;
         } else {
-            condicionFinal = this.condicion.token.value;
+            condicionFinal = this.condicion.token.lexeme;
         }
         return "\t\tif(" + condicionFinal + "){\n\t\t" + this.comandos.toJava(emitter) + "\n\t\t}"
     }
@@ -55,13 +49,14 @@ export class Asignacion{
     }
 
     toJava(emitter){
-        emitter.logs.push("Asignando en Java")
-        let assignedDataType = "";
-        if (this.dataType != undefined){
-            assignedDataType = this.dataType + " ";
-        }
-        emitter.logs.push(`Nombre: ${this.name}, Valor: ${this.value}`)
-        return "\t\t" + assignedDataType + this.name + " = " + this.value.toExpresion(emitter) +  ";"
+        // emitter.logs.push("Asignando en Java")
+        // let assignedDataType = "";
+        // if (this.dataType != undefined){
+        //     assignedDataType = this.dataType + " ";
+        // }
+        // emitter.logs.push(`Nombre: ${this.name}, Valor: ${this.value}`)
+        // return "\t\t" + assignedDataType + this.name + " = " + this.value.toExpresion(emitter) +  ";"
+        return "a";
     }
 
   

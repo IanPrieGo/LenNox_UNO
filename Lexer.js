@@ -24,15 +24,15 @@ export class Lexer {
                 this.currentChar() === " " |
                 this.currentChar() === "\r" |
                 this.currentChar() === "\n" |
-                this.currentChar() === "#"
+                this.currentChar() === "#/"
             ){  
                 if (this.currentChar() === "\r")this.lineIndex++;
 
-                if(this.currentChar() === "#"){
+                if(this.currentChar() === ""){
                     // console.log("Checando comentarios");
                     let commStart = this.lineIndex;
                     this.charIndex++;
-                    while (this.currentChar() != "#"){
+                    while (this.currentChar() != "#/"){
                         // console.log("No encuentro el final del Comentario Jefe ");
                         if (this.currentChar() == undefined) this.abort(`No matching # for # at line ${commStart}`, 1);
                         this.charIndex++;
@@ -49,39 +49,70 @@ export class Lexer {
             switch(this.currentChar()){
                 
                 case "+":
+                    this.tokens.push(new Token(TokenTypes.CRUZ, this.currentChar(), null, this.lineIndex));
+                    break;
                 case "-":
+                    this.tokens.push(new Token(TokenTypes.RAYA, this.currentChar(), null, this.lineIndex));
+                    break;
                 case "*":
+                    this.tokens.push(new Token(TokenTypes.ASTERISCO, this.currentChar(), null, this.lineIndex));
+                    break;
                 case "/":
-                    this.tokens.push(new Token(TokenTypes.OPERADOR, this.currentChar(), this.lineIndex));
-                break;
+                    this.tokens.push(new Token(TokenTypes.DIAGONAL, this.currentChar(), null, this.lineIndex));
+                    break;
+            
 
                 case ">":
+                    if (this.nextChar() == "="){
+                        this.tokens.push(new Token(TokenTypes.MAYOR_IGUAL, this.currentChar() + this.nextChar(), null, this.lineIndex));
+                        this.charIndex++;
+                    } else {
+                        this.tokens.push(new Token(TokenTypes.MAYOR_QUE, this.currentChar(), null, this.lineIndex));
+                    }
+                    break;
                 case "<":
-                case "!":
+                    if (this.nextChar() == "="){
+                        this.tokens.push(new Token(TokenTypes.MENOR_IGUAL, this.currentChar() + this.nextChar(), null, this.lineIndex));
+                        this.charIndex++;
+                    } else {
+                        this.tokens.push(new Token(TokenTypes.MENOR_QUE, this.currentChar(), null, this.lineIndex));
+                    }                    
+                    break;
+                case "!":   
+                    if (this.nextChar() == "="){
+                        this.tokens.push(new Token(TokenTypes.NO_IGUAL, this.currentChar() + this.nextChar(), null, this.lineIndex));
+                        this.charIndex++;
+                    } else {
+                        this.tokens.push(new Token(TokenTypes.NO_ES, this.currentChar(), null, this.lineIndex));
+                    }
+                    break;
                 case "=":
                     if (this.nextChar() == "="){
-                        this.tokens.push(new Token(TokenTypes.OPERADOR, this.currentChar() + this.nextChar(), this.lineIndex));
+                        this.tokens.push(new Token(TokenTypes.IGUAL_IGUAL, this.currentChar() + this.nextChar(), null, this.lineIndex));
+                        this.charIndex++;
                     } else {
-                        this.tokens.push(new Token(TokenTypes.OPERADOR, this.currentChar(), this.lineIndex));
+                        this.tokens.push(new Token(TokenTypes.IGUAL, this.currentChar(), null,  this.lineIndex));
                     }
-                break;
+                    break;
 
                 case ";":
-                    this.tokens.push(new Token(TokenTypes.EOC, this.currentChar(), this.lineIndex));
-                break;
-
+                    this.tokens.push(new Token(TokenTypes.PUNTO_COMA, this.currentChar(), null,  this.lineIndex));
+                    break;
                 case "{":
+                    this.tokens.push(new Token(TokenTypes.LLAVE_ABIERTA, this.currentChar(), null, this.lineIndex));
+                    break;
                 case "(":
-                    this.tokens.push(new Token(TokenTypes.ABRIR_GRUPO, this.currentChar(), this.lineIndex));
-                break;
-
+                    this.tokens.push(new Token(TokenTypes.PARENTESIS_ABIERTO, this.currentChar(), null, this.lineIndex));
+                    break;
                 case "}":
+                    this.tokens.push(new Token(TokenTypes.LLAVE_CERRADA, this.currentChar(), null, this.lineIndex));
+                    break;
                 case ")":
-                    this.tokens.push(new Token(TokenTypes.CERRRA_GRUPO, this.currentChar(), this.lineIndex));
-                break;
+                    this.tokens.push(new Token(TokenTypes.PARENTESIS_CERRADO, this.currentChar(), null, this.lineIndex));
+                    break;
 
-                case "\"":                    
-                    let cadena =  "\"";
+                case "\"":
+                    let cadena = "";
                     let quit = false;
                     let keyPos;
                     this.charIndex++;
@@ -90,10 +121,8 @@ export class Lexer {
                         cadena += this.currentChar();
                         this.charIndex++;
                     }
-                    cadena += "\"";
-                    this.tokens.push(new Token(TokenTypes.LITERAL, cadena, this.lineIndex));
-
-                break;
+                    this.tokens.push(new Token(TokenTypes.CADENA, cadena, null, this.lineIndex));
+                    break;
 
                 
                 default:
@@ -103,7 +132,7 @@ export class Lexer {
                         this.charIndex++;
                         num += this.currentChar();
                     }
-                    this.tokens.push(new Token(TokenTypes.LITERAL, num, this.lineIndex));
+                    this.tokens.push(new Token(TokenTypes.NUMERO, num, num, this.lineIndex));
 
                 } else if(this.isAlpha(this.currentChar())){
                     let word =  this.currentChar();
@@ -114,21 +143,33 @@ export class Lexer {
 
                     switch(word){
                         case "Imprime":
+                            this.tokens.push(new Token(TokenTypes.IMPRIME, word, null, this.lineIndex));
+                        break;
                         case "Mientras":
+                            this.tokens.push(new Token(TokenTypes.MIENTRAS, word, null, this.lineIndex));
+                        break;
                         case "Var":
+                            this.tokens.push(new Token(TokenTypes.VAR, word, null, this.lineIndex));
+                        break;
                         case "Si":
+                            this.tokens.push(new Token(TokenTypes.SI, word, null, this.lineIndex));
+                        break;
                         case "Sino":
-                            this.tokens.push(new Token(TokenTypes.PALABRA_RESERVADA, word, this.lineIndex));
+                            this.tokens.push(new Token(TokenTypes.SINO, word, null, this.lineIndex));
                         break;
 
                         case "ver":
+                            this.tokens.push(new Token(TokenTypes.VERDAD, word, true, this.lineIndex));
+                        break;
                         case "fal":
+                            this.tokens.push(new Token(TokenTypes.FALSO, word, false, this.lineIndex));
+                        break;
                         case "nul":
-                            this.tokens.push(new Token(TokenTypes.LITERAL, word, this.lineIndex));
+                            this.tokens.push(new Token(TokenTypes.NULO, word, null, this.lineIndex));
                         break;
 
                         default:
-                            this.tokens.push(new Token(TokenTypes.IDENTIFICADOR, word, this.lineIndex));
+                            this.tokens.push(new Token(TokenTypes.IDENTIFICADOR, word, null, this.lineIndex));
                         break;
                     }
                     
@@ -147,9 +188,10 @@ export class Lexer {
             this.charIndex++;
         }
 
-        this.tokens.push(new Token(TokenTypes.EOF, null, this.lineIndex));
+        this.tokens.push(new Token(TokenTypes.FDA,null, null, this.lineIndex));
 
-        // console.log(this.tokens);
+        this.logs.push("Processed Tokens: ");
+        this.logs.push(this.tokens);
 
     }
 

@@ -1,3 +1,6 @@
-Si(ver){
+Si(fal){
     Imprime{"xd"};
 }
+
+Var a = 0;
+b = 10;
