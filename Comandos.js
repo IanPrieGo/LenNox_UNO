@@ -13,17 +13,10 @@ export class Condicional {
         return `Condicional\n Condicion sin Evaluar: ${this.condicion}, \nComandos Integrados:${this.comandos}, \nCondicional Alternativo: ${this.condicionalAlternativo}`;
     }
 
-    toJava(emitter){
-        let condicionFinal;
-        if (this.condicion.token.type == TokenType.VERDAD ) {
-            condicionFinal = true;
-        } else if (this.condicion.token.type == TokenType.FALSO) {
-            condicionFinal = false;
-        } else {
-            condicionFinal = this.condicion.token.lexeme;
-        }
-        return "\t\tif(" + condicionFinal + "){\n\t\t" + this.comandos.toJava(emitter) + "\n\t\t}"
+    transpilar(transpilador){
+        return transpilador.transCondicional(this, transpilador);
     }
+
 }
 
 export class Asignacion{
@@ -33,7 +26,6 @@ export class Asignacion{
         this.dataType = dataType;
     }
 
- 
     toString(){
         let value;
         if (this.value ==  "nul"){
@@ -48,19 +40,12 @@ export class Asignacion{
         return "Asignacion \n" + "Nombre Variable: " + this.name.toString() + ", Valor Asignado: " + this.value.toString();
     }
 
-    toJava(emitter){
-        // emitter.logs.push("Asignando en Java")
-        // let assignedDataType = "";
-        // if (this.dataType != undefined){
-        //     assignedDataType = this.dataType + " ";
-        // }
-        // emitter.logs.push(`Nombre: ${this.name}, Valor: ${this.value}`)
-        // return "\t\t" + assignedDataType + this.name + " = " + this.value.toExpresion(emitter) +  ";"
-        return "a";
+    transpilar(transpilador){
+        return transpilador.transAsignacion(this);
     }
-
   
 }
+
 export class Creacion{
     constructor(name, value, dataType){
         this.name = name;
@@ -78,28 +63,21 @@ export class Creacion{
         }
         return "Creacion \n" + "Nombre Variable: " + this.name.toString() + ", Valor Asignado: " + value;
     }
-    
-    toJava(emitter){
-        emitter.logs.push("Creando en Java");
-        emitter.logs.push(this.value)
-        let assignedDataType = "Object ";
-        if (this.dataType != undefined){
-            assignedDataType = this.dataType;
-        }
 
-        if (this.value == null) return "\t\t" + assignedDataType + this.name + ";"; 
-        return "\t\t" + assignedDataType + this.name + " = " + this.value.toExpresion(emitter) +  ";"
+    transpilar(transpilador){
+        return transpilador.transCreacion(this);
     }
+    
 }
-export class Ciclo{}
 
 export class Impresion{
     constructor(valorAImprimir){
         this.valorAImprimir = valorAImprimir;
         this.valorFinal;
     }
-    toJava(){
-        return "\t\tSystem.out.println(" + this.valorAImprimir.concatenate() +");";
+
+    transpilar(transpilador){
+        return transpilador.transImpresion(this);
     }
 
     toString(){
@@ -107,6 +85,8 @@ export class Impresion{
     }
 
 }
+
+export class Ciclo{}
 export class Metodo{}
 export class Operacion{}
 export class Acceso{}

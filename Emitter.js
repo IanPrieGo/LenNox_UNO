@@ -1,3 +1,4 @@
+import * as aJava from "./Transpiladores/Trans_Java.js";
 import fs from "node:fs";
 
 
@@ -18,7 +19,7 @@ export class Emitter{
         let body = "";
 
         for (let com of this.commands){        
-            body += com.toJava(this) + "\n";
+            body += com.transpilar(aJava) + "\n";
         }
 
         let footer = 

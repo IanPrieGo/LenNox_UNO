@@ -1,3 +1,8 @@
+import * as Expresion from "../Expresion.js";
+import * as TokenType from "../TokenTypes.js";
+import {Token} from "../Token.js";
+
+
 export function transImpresion(comando){
 
 }

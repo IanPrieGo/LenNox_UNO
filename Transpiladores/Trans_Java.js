@@ -7,7 +7,14 @@ export function transImpresion(comando){
 }
 
 export function transAsignacion(comando){
-
+    // emitter.logs.push("Asignando en Java")
+    let assignedDataType = "";
+    if (comando.dataType != undefined){
+        assignedDataType = comando.dataType + " ";
+    }
+    // emitter.logs.push(`Nombre: ${comando.name}, Valor: ${comando.value}`)
+    return "\t\t" + assignedDataType + comando.name + " = " + comando.value.toExpresion() +  ";"
+    // return "a";
 }
 
 export function transCreacion(comando){
@@ -22,7 +29,7 @@ export function transCreacion(comando){
     return "\t\t" + assignedDataType + comando.name + " = " + comando.value.toExpresion(emitter) +  ";"
 }
 
-export function transCondicional(comando){
+export function transCondicional(comando, transpilador){
     let condicionFinal;
     if (comando.condicion.token.type == TokenType.VERDAD ) {
         condicionFinal = true;
@@ -31,7 +38,14 @@ export function transCondicional(comando){
     } else {
         condicionFinal = comando.condicion.token.lexeme;
     }
-    return "\t\tif(" + condicionFinal + "){\n\t\t" + comando.comandos.toJava(emitter) + "\n\t\t}"
+
+    let contenidoFinal;
+    if(comando.comandos == undefined){
+        contenidoFinal = "";
+    } else {
+        contenidoFinal = comando.comandos.transpilar(transpilador);
+    }
+    return "\t\tif(" + condicionFinal + "){\n\t\t" + contenidoFinal + "\n\t\t}"
 }
 
 export function transCiclo(comando){

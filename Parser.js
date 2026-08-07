@@ -71,9 +71,14 @@ export class Parser {
                 comando = this.condicional();
             break;
 
+            case  TokenType.IDENTIFICADOR:
+                // console.log("   Condicional");
+                comando = this.asignacion();
+            break;
+
             default:
-                // console.log("   Asignacion");
-                this.asignacion();
+                return undefined;
+                // this.abort("Invalid Command | ", 1);
             break;
 
         }
@@ -87,11 +92,12 @@ export class Parser {
     //COMANDOS
     condicional(){
         this.logs.push(this.currentToken());
+
         
         this.advanceIndex(1);
         this.logs.push(this.currentToken());
         if (this.currentToken().type != TokenType.PARENTESIS_ABIERTO){
-            this.abort("Expecting \" ( \" ");
+            this.abort("Expecting \" ( \" for Condicional |");
         }
         
         this.advanceIndex(1);
@@ -110,7 +116,7 @@ export class Parser {
         this.advanceIndex(1);
         this.logs.push(this.currentToken());
         if (this.currentToken().type != TokenType.PARENTESIS_CERRADO){
-            this.abort("Expecting \" ) \" ");
+            this.abort("Expecting \" ) \" for Condicional |");
         }
 
         this.advanceIndex(1);
@@ -123,12 +129,12 @@ export class Parser {
         this.logs.push(this.currentToken());
         let command = this.command();
 
+        console.log("Condicionaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaal");
         
         this.logs.push(this.currentToken());
         if (this.currentToken().type != TokenType.LLAVE_CERRADA){
-            this.abort("Expecting \" } \" ");
+            this.abort("Expecting \" } \" for Condicional |");
         }
-        console.log("Condicional procesado sin errores")
 
         return new Comando.Condicional(condicion, command);
 
@@ -141,7 +147,7 @@ export class Parser {
         this.advanceIndex(1);
 
         if (this.currentToken().type != TokenType.IGUAL){
-            this.abort("Expecting \" = \" ");
+            this.abort("Expecting \" = \" for Asignacion |");
         }
 
         this.advanceIndex(1);
@@ -159,7 +165,7 @@ export class Parser {
                 }
                 if (!isDeclared){
                     console.log(isDeclared);
-                    this.abort(`Se intento una operacion con una variable no declarada\nValor Token: ${this.currentToken()}`, 1)
+                    this.abort(`Se intento una operacion con una variable no declarada\nValor Token: ${this.currentToken()} for Asignacion |`, 1)
                 }
                 break;
             case TokenType.VERDAD:
@@ -168,7 +174,7 @@ export class Parser {
             case TokenType.CADENA:
                 break;
             default:
-                this.abort("Expecting Literal  ", 1);
+                this.abort("Expecting Literal for Asignacion |", 1);
 
         }
 
@@ -178,7 +184,7 @@ export class Parser {
 
         this.advanceIndex(1);
         if (this.currentToken().type != TokenType.PUNTO_COMA){
-            this.abort("Expecting \" ; \"", 1);
+            this.abort("Expecting \" ; \" for Asignacion |", 1);
         }
 
         return new Comando.Asignacion(variableName, variableValue);
@@ -192,14 +198,14 @@ export class Parser {
 
         this.advanceIndex(1);
         if (this.currentToken().type != TokenType.IDENTIFICADOR){
-            this.abort("Expecting Identifier ", 1);
+            this.abort("Expecting Identifier for Creacion |", 1);
         }
 
         variableName = this.currentToken().lexeme;
 
         for (let variable of this.declaredVariables){
             if (variable.nombre == variableName){
-                this.abort("Variable \"" + variable.nombre +"\" Already Declared ", 1);
+                this.abort("Variable \"" + variable.nombre +"\" Already Declared for Creacion |", 1);
             };
         }
         this.logs.push("Variable  \"" + variableName +"\" added to Declared variables list");
@@ -224,7 +230,7 @@ export class Parser {
                 case "object":
                 case "function":
                 default:
-                    this.abort(`Invalid DataType \"${typeof variableValue}\" ${variableValue}`, 1);
+                    this.abort(`Invalid DataType \"${typeof variableValue}\" ${variableValue} for Creacion |`, 1);
                     break;
             }
         }
@@ -239,7 +245,7 @@ export class Parser {
     
 
         if (this.currentToken().type != TokenType.PUNTO_COMA){
-            this.abort("Expecting \" ; \"", 1);
+            this.abort("Expecting \" ; \" for Creacion |", 1);
         }
 
         console.log(
@@ -258,7 +264,7 @@ export class Parser {
         this.advanceIndex(1);
         this.logs.push(this.currentToken());
         if (this.currentToken().type != TokenType.LLAVE_ABIERTA){
-            this.abort("Expecting \" { \" ");
+            this.abort("Expecting \" { \" for Impresion |", 1);
         }
 
         this.advanceIndex(1);
@@ -267,18 +273,18 @@ export class Parser {
         valorAImprimir = this.expresion();
         this.logs.push(valorAImprimir);
 
-        if (valorAImprimir == undefined) this.abort("Expecting Expression", 1);
+        if (valorAImprimir == undefined) this.abort("Expecting Expression for Impresion |", 1);
 
         this.advanceIndex(1);
         this.logs.push(this.currentToken());
         if (this.currentToken().type != TokenType.LLAVE_CERRADA){
-            this.abort("Expecting \" { \" ");
+            this.abort("Expecting \" { \" for Impresion |", 1);
         }
 
         this.advanceIndex(1);
         this.logs.push(this.currentToken());
         if (this.currentToken().type != TokenType.PUNTO_COMA){
-            this.abort("Expecting \" ; \"", 1);
+            this.abort("Expecting \" ; \" for Impresion |", 1);
         }
 
         
