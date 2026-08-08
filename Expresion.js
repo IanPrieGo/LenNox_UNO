@@ -13,7 +13,7 @@ export class BINARY{
     }
 
     toExpresion(e){
-        return `(${this.getDataType(e, this.firstOperand)})` + this.firstOperand.token.value + " " + this.operator.token + ` (${this.getDataType(e, this.firstOperand)})` + this.secondOperand.token.value;
+        return  this.firstOperand.toExpresion() + " " + this.operator.token.lexeme + " " + this.secondOperand.toExpresion();
     }
 
     getDataType(emitter, variable){
@@ -41,7 +41,10 @@ export class LITERAL{
     }
 
     toExpresion(){
-        return this.token.lexeme;
+        if (this.token.type == TokenType.IDENTIFICADOR){
+            return "(int)" + this.token.lexeme;
+        }
+        return this.token.literal;
     }
 
     concatenate(){

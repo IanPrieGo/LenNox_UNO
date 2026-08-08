@@ -13,7 +13,7 @@ export function transAsignacion(comando){
         assignedDataType = comando.dataType + " ";
     }
     // emitter.logs.push(`Nombre: ${comando.name}, Valor: ${comando.value}`)
-    return "\t\t" + assignedDataType + comando.name + " = " + comando.value.toExpresion() +  ";"
+    return "\t\t" + assignedDataType + comando.name + " = " + comando.value.token.literal +  ";"
     // return "a";
 }
 
@@ -26,7 +26,7 @@ export function transCreacion(comando){
     }
 
     if (comando.value == null) return "\t\t" + assignedDataType + comando.name + ";"; 
-    return "\t\t" + assignedDataType + comando.name + " = " + comando.value.toExpresion(emitter) +  ";"
+    return "\t\t" + assignedDataType + comando.name + " = " + comando.value.toExpresion() +  ";"
 }
 
 export function transCondicional(comando, transpilador){
@@ -36,7 +36,7 @@ export function transCondicional(comando, transpilador){
     } else if (comando.condicion.token.type == TokenType.FALSO) {
         condicionFinal = false;
     } else {
-        condicionFinal = comando.condicion.token.lexeme;
+        condicionFinal = "(boolean)" + comando.condicion.token.lexeme;
     }
 
     let contenidoFinal;

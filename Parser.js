@@ -103,12 +103,22 @@ export class Parser {
         this.advanceIndex(1);
         this.logs.push(this.currentToken());
 
-        if (
-            this.currentToken().type != TokenType.VERDAD &&
-            this.currentToken().type != TokenType.FALSO
-        ){
+        // if (
+        //     this.currentToken().type != TokenType.VERDAD &&
+        //     this.currentToken().type != TokenType.FALSO
+        // ){
             
-            this.abort("Expectig Boolean Literal")
+        //     this.abort("Expecting Boolean Literal")
+        // }
+
+        switch(this.currentToken().type){
+            case TokenType.VERDAD:
+            case TokenType.FALSO:
+            case TokenType.IDENTIFICADOR:
+                break;
+            default:
+                this.abort("Expecting Boolean Literal or Expresion for Condicional |");
+            break;
         }
 
         let condicion = this.expresion();

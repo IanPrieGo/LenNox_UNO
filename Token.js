@@ -11,4 +11,8 @@ export class Token {
     toString(){
         return this.type + ", \" " + this.lexeme + " \"" + ",  " + this.literal + "";
     }
+
+    tipo(){
+        return this.type;
+    }
 }

@@ -1,8 +1,6 @@
 import * as TokenTypes from "./TokenTypes.js";
 import {Token} from "./Token.js";
 import process from "node:process";
-import { clearScreenDown } from "node:readline";
-import { match } from "node:assert";
 
 export class Lexer {
     constructor(){
@@ -24,15 +22,14 @@ export class Lexer {
                 this.currentChar() === " " |
                 this.currentChar() === "\r" |
                 this.currentChar() === "\n" |
-                this.currentChar() === "#/"
+                this.currentChar() === "#"
             ){  
-                if (this.currentChar() === "\r")this.lineIndex++;
+                if (this.currentChar() === "\r")this.lineIndex++;   
 
-                if(this.currentChar() === ""){
-                    // console.log("Checando comentarios");
+                if(this.currentChar() === "#"){
                     let commStart = this.lineIndex;
                     this.charIndex++;
-                    while (this.currentChar() != "#/"){
+                    while (this.currentChar() != "#"){
                         // console.log("No encuentro el final del Comentario Jefe ");
                         if (this.currentChar() == undefined) this.abort(`No matching # for # at line ${commStart}`, 1);
                         this.charIndex++;
@@ -177,10 +174,11 @@ export class Lexer {
                 } else if (this.currentChar() === undefined){
                     //Just Exit The Loop
                 } else {
-                    let char = [this.currentChar()]
-                    console.log(char);
-                    console.log(this.charIndex);
-                    process.exit(1);
+                    // let char = [this.currentChar()]
+                    // console.log(char);
+                    // console.log(this.charIndex);
+                    // process.exit(1);
+                    this.abort("Carácter Inesperado [ " + this.currentChar() + " ] en la línea " + this.lineIndex, 1);
                 }
                 break;
             }

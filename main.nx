@@ -1,3 +1,13 @@
-Si (ver){
+#Var ver = true;#
 
+Var a = ver;
+
+Var b = a - 10 + 20;
+
+a = ver;
+
+Si (a){
+    Imprime{"a"};
 }
+
+Imprime{b};
