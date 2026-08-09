@@ -1,13 +1,3 @@
 #Var ver = true;#
 
-Var a = ver;
-
-Var b = a - 10 + 20;
-
-a = ver;
-
-Si (a){
-    Imprime{"a"};
-}
-
-Imprime{b};
+Imprime{"Mira Danna, se ejecuta lo que le digo que se ejecute xd"};
